@@ -1,0 +1,141 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthResponse {
+  access_token: String!
+  user: User!
+}
+
+type Company {
+  address: String
+  country_code: String
+  createdAt: DateTime!
+  email: String
+  feid_gsd: String
+  id: ID!
+  industry_type: String
+  name: String!
+  phone_country_code: String
+  phone_number: String
+  postal_code: String
+  updatedAt: DateTime!
+  website_url: String
+}
+
+input CompanyFilterDto {
+  address: String
+  email: String
+  feid_gsd: String
+  industry_type: String
+  name: String
+  phone_number: String
+  postal_code: String
+}
+
+type ContactPerson {
+  email: String
+  id: Int!
+  name: String!
+  phone: String
+}
+
+input CreateCompanyDto {
+  address: String
+  country_code: String
+  email: String
+  feid_gsd: String
+  industry_type: String
+  name: String!
+  phone_country_code: String
+  phone_number: String
+  postal_code: String
+  website_url: String
+}
+
+input CreateUserInput {
+  altEmail: String
+  altMobile: String
+  createdBy: String
+  email: String!
+  firstName: String!
+  lastName: String!
+  mobile: String!
+  password: String!
+  updatedBy: String
+  userType: String
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  createCompany(input: CreateCompanyDto!): Company!
+  createContactPerson(email: String, name: String!, phone: String): ContactPerson!
+  deleteUser(id: ID!): Boolean!
+  login(input: user!): AuthResponse!
+  register(input: CreateUserInput!): AuthResponse!
+  registerUser(input: CreateUserInput!): User!
+  removeCompany(id: Int!): Boolean!
+  updateCompany(input: UpdateCompanyDto!): Company!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+}
+
+type Query {
+  companies(filters: CompanyFilterDto): [Company!]!
+  company(id: Int!): Company!
+  contactPersons: [ContactPerson!]!
+  me: User!
+  user(id: ID!): User!
+  users: [User!]!
+}
+
+input UpdateCompanyDto {
+  address: String
+  country_code: String
+  email: String
+  feid_gsd: String
+  id: Int!
+  industry_type: String
+  name: String
+  phone_country_code: String
+  phone_number: String
+  postal_code: String
+  website_url: String
+}
+
+input UpdateUserInput {
+  altEmail: String
+  altMobile: String
+  createdBy: String
+  email: String
+  firstName: String
+  id: ID!
+  lastName: String
+  mobile: String
+  password: String
+  updatedBy: String
+  userType: String
+}
+
+type User {
+  altEmail: String
+  altMobile: String
+  createdAt: DateTime!
+  createdBy: String
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+  mobile: String!
+  updatedAt: DateTime!
+  updatedBy: String
+  userType: String!
+}
+
+input user {
+  email: String!
+  password: String!
+}
