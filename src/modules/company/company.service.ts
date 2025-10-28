@@ -22,7 +22,7 @@ export class CompanyService {
 
   async findAll(filters: any): Promise<Company[]> {
     const query = this.companyRepo.createQueryBuilder();
-    applyFilters(query, 'company', filters, { exactFields: ['id'] });
+    // applyFilters(query, 'company', filters, { exactFields: ['id'] });
     const result = await query.getMany();
     return result;
   }
