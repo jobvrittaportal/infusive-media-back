@@ -1,16 +1,26 @@
-// roles.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
-// import { Permission } from '../permissions/permissions.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { RolePermission } from './role-permission.entity';
 
+@ObjectType()
 @Entity('roles')
 export class Role {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @Field(() => ID)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
+  @Field()
   @Column({ unique: true })
-  name: string; // e.g. "Admin", "Manager", "Employee"
+  name: string;
 
-//   @ManyToMany(() => Permission, { eager: true })
-//   @JoinTable()
-//   permissions: any[];
+  @Field()
+  @Column({ default: true })
+  active: boolean;
+
+  @Field(() => [RolePermission], { nullable: true })
+  @OneToMany(() => RolePermission, (perm) => perm.role, {
+    cascade: true,
+    eager: true,
+  })
+  permissions: RolePermission[];
 }
