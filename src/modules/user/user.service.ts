@@ -31,6 +31,9 @@ export class UserService {
       ...input,
       password: hashedPassword,
       userType: input.userType || 'user',
+      roles: input.roleIds
+        ? input.roleIds.map((roleId) => ({ id: roleId }))
+        : [],
     });
 
     return this.userRepository.save(user);
@@ -63,18 +66,23 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  // ✅ Change password securely
-  async changePassword(id: string, newPassword: string): Promise<boolean> {
-    const user = await this.findById(id);
-    user.password = await bcrypt.hash(newPassword, 10);
-    await this.userRepository.save(user);
-    return true;
-  }
-
   // ✅ Delete user
   async deleteUser(id: string): Promise<boolean> {
     const result = await this.userRepository.delete(id);
 
     return (result.affected ?? 0) > 0;
+  }
+
+  // Change Password
+  async changePassword(id: string, newPassword: string): Promise<boolean> {
+    const user = await this.findById(id);
+    if (!user) throw new NotFoundException('User not found');
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    user.updatedAt = new Date();
+
+    await this.userRepository.save(user);
+    return true;
   }
 }

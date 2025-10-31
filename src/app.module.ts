@@ -14,6 +14,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { graphqlConfig } from './config/graphql.config';
+import { OtpModule } from './modules/otp/otp.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { graphqlConfig } from './config/graphql.config';
     UserModule,
     AuthModule,
     RoleModule,
+    OtpModule,
+    MailModule
   ],
   controllers: [AppController, CompanyController],
   providers: [AppService],
