@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Role } from 'src/modules/role/entitity/role.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,7 +9,6 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-// import { Role } from 'src/modules/roles/role.entity'; // assuming you’ll have a Role module later
 
 @ObjectType()
 @Entity('users')
@@ -43,19 +43,20 @@ export class User {
 
   @Field()
   @Column({ default: 'user' })
-  userType: string; // e.g. "admin", "agent", "tenant", etc.
+  userType: string; // "admin", "agent", etc.
 
   @Column()
-  password: string; // DO NOT expose this via @Field — keep it hidden
+  password: string; // 🚫 not exposed in GraphQL
 
-  // @Field(() => [Role], { nullable: true })
-  // @ManyToMany(() => Role, { eager: true })
-  // @JoinTable({
-  //   name: 'user_roles',
-  //   joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-  //   inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
-  // })
-  // roles?: Role[];
+  // ✅ Correct Many-to-Many relation with Role
+  @Field(() => [Role], { nullable: true })
+  @ManyToMany(() => Role, { eager: true })
+  @JoinTable({
+    name: 'user_roles', // ✅ Correct join table
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
+  })
+  roles?: Role[];
 
   @Field({ nullable: true })
   @Column({ nullable: true })

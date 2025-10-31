@@ -53,6 +53,12 @@ input CreateCompanyDto {
   website_url: String
 }
 
+input CreateRoleInput {
+  active: Boolean! = true
+  name: String!
+  permissions: JSON
+}
+
 input CreateUserInput {
   altEmail: String
   altMobile: String
@@ -62,8 +68,9 @@ input CreateUserInput {
   lastName: String!
   mobile: String!
   password: String!
+  roleIds: [ID!]
   updatedBy: String
-  userType: String
+  userType: String = "user"
 }
 
 """
@@ -71,16 +78,34 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
 type Mutation {
   createCompany(input: CreateCompanyDto!): Company!
   createContactPerson(email: String, name: String!, phone: String): ContactPerson!
+  createRole(input: CreateRoleInput!): Role!
   deleteUser(id: ID!): Boolean!
-  login(input: user!): AuthResponse!
+  login(input: LoginInput!): AuthResponse!
   register(input: CreateUserInput!): AuthResponse!
   registerUser(input: CreateUserInput!): User!
   removeCompany(id: Int!): Boolean!
   updateCompany(input: UpdateCompanyDto!): Company!
+  updateRole(id: String!, input: UpdateRoleInput!): Role!
   updateUser(id: ID!, input: UpdateUserInput!): User!
+}
+
+type PermissionObject {
+  delete: Boolean
+  read: Boolean
+  upsert: Boolean
 }
 
 type Query {
@@ -88,8 +113,23 @@ type Query {
   company(id: Int!): Company!
   contactPersons: [ContactPerson!]!
   me: User!
+  role(id: String!): Role!
+  roles(query: String): [Role!]!
   user(id: ID!): User!
   users: [User!]!
+}
+
+type Role {
+  active: Boolean!
+  id: ID!
+  name: String!
+  permissions: [RolePermission!]
+}
+
+type RolePermission {
+  feature: String!
+  id: ID!
+  permissions: PermissionObject!
 }
 
 input UpdateCompanyDto {
@@ -106,6 +146,13 @@ input UpdateCompanyDto {
   website_url: String
 }
 
+input UpdateRoleInput {
+  active: Boolean = true
+  id: ID!
+  name: String
+  permissions: JSON
+}
+
 input UpdateUserInput {
   altEmail: String
   altMobile: String
@@ -116,8 +163,9 @@ input UpdateUserInput {
   lastName: String
   mobile: String
   password: String
+  roleIds: [ID!]
   updatedBy: String
-  userType: String
+  userType: String = "user"
 }
 
 type User {
@@ -130,12 +178,8 @@ type User {
   id: ID!
   lastName: String!
   mobile: String!
+  roles: [Role!]
   updatedAt: DateTime!
   updatedBy: String
   userType: String!
-}
-
-input user {
-  email: String!
-  password: String!
 }

@@ -18,9 +18,9 @@ export class Role {
   active: boolean;
 
   @Field(() => [RolePermission], { nullable: true })
-  @OneToMany(() => RolePermission, (perm) => perm.role, {
+  @OneToMany(() => RolePermission, (rolePermission) => rolePermission.role, {
     cascade: true,
-    eager: true,
+    eager: true, // optional
   })
-  permissions: RolePermission[];
+  permissions?: RolePermission[];
 }

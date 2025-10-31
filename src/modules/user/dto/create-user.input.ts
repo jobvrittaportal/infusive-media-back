@@ -1,5 +1,14 @@
-import { InputType, Field } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsOptional, Length } from 'class-validator';
+import { InputType, Field, ID } from '@nestjs/graphql';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  Length,
+  IsString,
+  Matches,
+} from 'class-validator';
 
 @InputType()
 export class CreateUserInput {
@@ -22,15 +31,24 @@ export class CreateUserInput {
 
   @Field()
   @IsNotEmpty()
+  @Matches(/^[0-9]{10}$/, { message: 'Mobile must be a 10-digit number' })
   mobile: string;
 
   @Field({ nullable: true })
   @IsOptional()
+  @Matches(/^[0-9]{10}$/, { message: 'Alt mobile must be a 10-digit number' })
   altMobile?: string;
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: 'user' })
   @IsOptional()
   userType?: string;
+
+  // ✅ Instead of embedding CreateRoleInput, reference existing Role IDs
+  @Field(() => [ID], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  roleIds?: string[];
 
   @Field()
   @IsNotEmpty()
