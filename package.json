@@ -38,6 +38,7 @@
     "graphql": "^16.8.1",
     "graphql-type-json": "^0.3.2",
     "mysql2": "^3.6.5",
+    "nodemailer": "^7.0.10",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.1.14",

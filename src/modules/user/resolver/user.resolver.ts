@@ -6,6 +6,7 @@ import { CreateUserInput } from '../dto/create-user.input';
 import { GqlAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/modules/auth/guards/current-user.guard';
 import { UpdateUserInput } from '../dto/update-user.input';
+import { ChangePasswordInput } from '../dto/change-password.input';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -32,6 +33,7 @@ export class UserResolver {
   }
 
   // ✅ Public query: fetch single user by id
+  @UseGuards(GqlAuthGuard)
   @Query(() => User, { name: 'user' })
   async getUser(@Args('id', { type: () => ID }) id: string): Promise<User> {
     return this.userService.findById(id);
@@ -54,5 +56,13 @@ export class UserResolver {
     @Args('id', { type: () => ID }) id: string,
   ): Promise<boolean> {
     return this.userService.deleteUser(id);
+  }
+
+  // Change Password
+   @Mutation(() => Boolean, { name: 'changePassword' })
+  async changePassword(
+    @Args('input') input: ChangePasswordInput,
+  ): Promise<boolean> {
+    return this.userService.changePassword(input.userId, input.newPassword);
   }
 }
