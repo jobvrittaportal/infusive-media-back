@@ -3,6 +3,18 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Role } from './role.entity';
 
 @ObjectType()
+class PermissionObject {
+  @Field({ nullable: true })
+  read: boolean;
+
+  @Field({ nullable: true })
+  upsert: boolean;
+
+  @Field({ nullable: true })
+  delete: boolean;
+}
+
+@ObjectType()
 @Entity('role_permissions')
 export class RolePermission {
   @Field(() => ID)
@@ -13,9 +25,9 @@ export class RolePermission {
   @Column()
   feature: string;
 
-  @Field(() => String)
+  @Field(() => PermissionObject)
   @Column('json')
-  permissions: Record<string, boolean>;
+  permissions: PermissionObject;
 
   @ManyToOne(() => Role, (role) => role.permissions, { onDelete: 'CASCADE' })
   role: Role;

@@ -11,6 +11,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   password: process.env.DB_PASS || 'admin',
   database: process.env.DB_NAME || 'infusive',
   entities: [__dirname + '/../**/*.entity.{ts,js}'],
-  synchronize: true, // disable in prod
+  synchronize: true, // disable automatic sync
+  // migrationsRun: true,
   logging: true,
 };

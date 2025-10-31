@@ -84,4 +84,11 @@ export class RolesService {
     if (!role) throw new NotFoundException('Role not found');
     return role;
   }
+
+  async findByName(query: string): Promise<Role[]> {
+    return this.roleRepo
+      .createQueryBuilder('role')
+      .where('role.name ILIKE :query', { query: `%${query}%` })
+      .getMany();
+  }
 }

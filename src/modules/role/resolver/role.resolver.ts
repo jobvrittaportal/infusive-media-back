@@ -9,7 +9,12 @@ export class RolesResolver {
   constructor(private readonly rolesService: RolesService) {}
 
   @Query(() => [Role])
-  async roles() {
+  async roles(
+    @Args('query', { type: () => String, nullable: true }) query: string,
+  ) {
+    if (query) {
+      return this.rolesService.findByName(query);
+    }
     return this.rolesService.findAll();
   }
 
