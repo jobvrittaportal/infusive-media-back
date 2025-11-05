@@ -12,34 +12,34 @@ import { ChangePasswordInput } from '../dto/change-password.input';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  // ✅ Public registration (no guard)
+
   @Mutation(() => User, { name: 'registerUser' })
   async registerUser(@Args('input') input: CreateUserInput): Promise<User> {
     return this.userService.createUser(input);
   }
 
-  // ✅ Protected query: fetch profile of logged-in user
+
   @UseGuards(GqlAuthGuard)
-  @Query(() => User, { name: 'me' })
+  @Query(() => User, { name: 'userById' })
   async getProfile(@CurrentUser() user: any): Promise<User> {
     return this.userService.findById(user.id);
   }
 
-  // ✅ Protected: fetch all users (admin-only if you want later)
+
   @UseGuards(GqlAuthGuard)
   @Query(() => [User], { name: 'users' })
   async getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
   }
 
-  // ✅ Public query: fetch single user by id
+
   @UseGuards(GqlAuthGuard)
   @Query(() => User, { name: 'user' })
   async getUser(@Args('id', { type: () => ID }) id: string): Promise<User> {
     return this.userService.findById(id);
   }
 
-  // ✅ Protected mutation: update user info
+
   @UseGuards(GqlAuthGuard)
   @Mutation(() => User, { name: 'updateUser' })
   async updateUser(
@@ -49,7 +49,7 @@ export class UserResolver {
     return this.userService.updateUser(id, input);
   }
 
-  // ✅ Protected mutation: delete user
+
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean, { name: 'deleteUser' })
   async deleteUser(
@@ -58,8 +58,8 @@ export class UserResolver {
     return this.userService.deleteUser(id);
   }
 
-  // Change Password
-   @Mutation(() => Boolean, { name: 'changePassword' })
+
+  @Mutation(() => Boolean, { name: 'changePassword' })
   async changePassword(
     @Args('input') input: ChangePasswordInput,
   ): Promise<boolean> {
