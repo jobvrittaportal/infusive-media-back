@@ -86,9 +86,9 @@ export class RolesService {
   }
 
   async findByName(query: string): Promise<Role[]> {
-    return this.roleRepo
-      .createQueryBuilder('role')
-      .where('role.name ILIKE :query', { query: `%${query}%` })
-      .getMany();
-  }
+  return this.roleRepo
+    .createQueryBuilder('role')
+    .where('LOWER(role.name) LIKE LOWER(:query)', { query: `%${query}%` })
+    .getMany();
+}
 }

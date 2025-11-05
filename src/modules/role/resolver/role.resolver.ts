@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
 import { RolesService } from '../role.service';
 import { Role } from '../entitity/role.entity';
 import { UpdateRoleInput } from '../dto/update-role.input';
@@ -30,9 +30,9 @@ export class RolesResolver {
 
   @Mutation(() => Role)
   async updateRole(
-    @Args('id') id: string,
+    @Args('id', { type: () => ID }) id: string,
     @Args('input') input: UpdateRoleInput,
-  ) {
+  ) : Promise<Role>{
     return this.rolesService.update(id, input);
   }
 }
