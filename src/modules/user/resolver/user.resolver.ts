@@ -1,5 +1,5 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { Resolver, Query, Mutation, Args, ID, Int, Info } from '@nestjs/graphql';
+import {  UseGuards } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { UserService } from '../user.service';
 import { CreateUserInput } from '../dto/create-user.input';
@@ -7,6 +7,7 @@ import { GqlAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/modules/auth/guards/current-user.guard';
 import { UpdateUserInput } from '../dto/update-user.input';
 import { ChangePasswordInput } from '../dto/change-password.input';
+import type { GraphQLResolveInfo } from 'graphql';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -25,11 +26,28 @@ export class UserResolver {
     return this.userService.findById(user.id);
   }
 
+@Query(() => [User], { name: 'users' })
+async getAllUsers(
+  @Info() info: GraphQLResolveInfo,
+  @Args('skip', { type: () => Int, nullable: true }) skip = 0,
+  @Args('limit', { type: () => Int, nullable: true }) limit = 10,
+  @Args('search', { type: () => String, nullable: true }) search?: string,
+): Promise<User[]> {
+ 
+  const shouldJoinRoles = info.fieldNodes.some((fieldNode) =>
+    fieldNode.selectionSet?.selections.some(
+      (sel: any) => sel.name.value === 'roles'
+    )
+  );
+  return this.userService.getAllUsers(skip, limit, search, shouldJoinRoles);
+}
 
   @UseGuards(GqlAuthGuard)
-  @Query(() => [User], { name: 'users' })
-  async getAllUsers(): Promise<User[]> {
-    return this.userService.getAllUsers();
+  @Query(()=> Int, {name: 'totalUsersCount'})
+  async getTotalUsersCount(
+    @Args('search', {type: () => String, nullable: true}) search?: string,
+  ): Promise<number> {
+    return this.userService.getTotalUsersCount(search);
   }
 
 
