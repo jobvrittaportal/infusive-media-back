@@ -2,6 +2,7 @@
 using Infusive_back.EntityData;
 using Infusive_back.JwtAuth;
 using Infusive_back.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetUsers([FromQuery] string? text)
         {
             try
@@ -56,6 +58,7 @@ namespace Infusive_back.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public IActionResult AddUsers([FromBody] UserDto users)
         {
             try
@@ -94,6 +97,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult UpdateUser([FromBody] UpdateUserDto userDto)
         {
             try

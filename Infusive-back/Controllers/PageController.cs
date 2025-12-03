@@ -20,7 +20,7 @@ namespace Hrlense.Controllers.hrlense
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public IActionResult Pages(string? lazyParams, string? search = null)
         {
             //if (!permission.HasPermission(User, "Page")) return BadRequest();
@@ -76,7 +76,7 @@ namespace Hrlense.Controllers.hrlense
 
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public IActionResult Create_Page(CreatePage newPage)
         {
             //if (!permission.HasPermission(User, "Page")) return BadRequest();
@@ -121,7 +121,7 @@ namespace Hrlense.Controllers.hrlense
         }
 
         [HttpPut("{id}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult Update_Page(int id, CreatePage page)
         {
             //if (!permission.HasPermission(User, "Page")) return BadRequest();
@@ -175,7 +175,7 @@ namespace Hrlense.Controllers.hrlense
         }
 
         [HttpDelete("{id}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult Delete_Page(int id)
         {
             //if (!permission.HasPermission(User, "Page")) return BadRequest();
@@ -197,7 +197,7 @@ namespace Hrlense.Controllers.hrlense
 
         [HttpGet]
         [Route("permission/{roleId}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult RolePermissions(int roleId)
         {
             //if (!permission.HasPermission(User, "Role")) return BadRequest("Permission not granted!");
@@ -242,7 +242,7 @@ namespace Hrlense.Controllers.hrlense
 
         [HttpPost]
         [Route("permission")]
-        //[Authorize]
+        [Authorize]
         public IActionResult AddRoleUpdatePermissions([FromBody] UpdateRolePermission rolePermissions)
         {
             try
@@ -297,7 +297,7 @@ namespace Hrlense.Controllers.hrlense
 
         [HttpPut]
         [Route("permission/{roleId}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult UpdateRoleAndPermissions(int roleId, [FromBody] UpdateRolePermission rolePermissions)
         {
             try

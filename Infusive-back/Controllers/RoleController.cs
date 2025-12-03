@@ -13,31 +13,9 @@ namespace Infusive_back.Controllers
     {
         readonly private MyDbContext db = db;
 
-        //[HttpGet]
-        //public IActionResult GetRoles([FromQuery] string? text, [FromQuery] string? lazyParams)
-        //{
-        //    try
-        //    {
-        //        var query = db.Role
-        //            .Select(r => new
-        //            {
-        //                r.Id,
-        //                r.Name,
-        //                Description = r.Desc,
-
-        //            }).ToList();
-        //        var totalRecords = 10;
-
-        //        return Ok(new { roles = query, count = totalRecords });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { error = ex.Message });
-        //    }
-        //}
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public IActionResult GetRoles([FromQuery] string? text, [FromQuery] string? lazyParams)
         {
             try
@@ -75,7 +53,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public IActionResult AddRole(Role role)
         {
             try
@@ -99,7 +77,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpPut("{id}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult EditRole(int id, [FromBody] Role updatedData)
         {
             try
@@ -130,7 +108,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpDelete("{id}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult DeleteRole(int id)
         {
             try
@@ -151,7 +129,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpGet("dropdown")]
-        //[Authorize]
+        [Authorize]
         public IActionResult GetRoleDropdown()
         {
             try

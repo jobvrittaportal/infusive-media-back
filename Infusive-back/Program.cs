@@ -1,57 +1,81 @@
 using Infusive_back.EntityData;
 using Infusive_back.JwtAuth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ----------- CORS CONFIGURATION -----------
 var policyName = "_myAllowSpecificOrigins";
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: policyName,
                       builder =>
                       {
                           builder
-                            .AllowAnyOrigin()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader();
+                            .AllowAnyOrigin()   // allow requests from any domain
+                            .AllowAnyMethod()   // allow any HTTP method (GET, POST, etc.)
+                            .AllowAnyHeader();  // allow any headers
                       });
 });
 
+// ----------- CONTROLLERS & SWAGGER -----------
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer(); // required for Swagger
+builder.Services.AddSwaggerGen(); // enables Swagger UI
 
+// ----------- DATABASE CONFIGURATION (MySQL) -----------
 builder.Services.AddDbContext<MyDbContext>(options =>
 {
     var connectionString = Infusive_back.Utility_Func.Common_Func.ConnectionString();
-
     options.UseMySql(
         connectionString,
-        ServerVersion.AutoDetect(connectionString)
+        ServerVersion.AutoDetect(connectionString) // automatically detects MySQL version
     );
 });
 
-builder.Services.AddSingleton<ITokenManager, TokenManager>();
+// ----------- JWT TOKEN SERVICES -----------
+builder.Services.AddSingleton<ITokenManager, TokenManager>(); // custom token manager (singleton instance)
+
+// Configure authentication to use JWT Bearer
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // default auth = JWT
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;    // default challenge = JWT
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true, // validate signature
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("Shubham@#2206@#Macky@kjhsa67576sjb")), // secret key
+        ValidateLifetime = true,         // token expiry validation
+        ValidateAudience = false,        // skipping audience validation
+        ValidateIssuer = false,          // skipping issuer validation
+        ClockSkew = TimeSpan.Zero        // no time tolerance for expiry
+    };
+});
+
+// ----------- HTTP CLIENT SUPPORT (FOR CALLING OTHER APIs) -----------
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ----------- DEVELOPMENT MODE SWAGGER -----------
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection();  // force HTTPS
+app.UseCors(policyName);    // enable CORS policy
+app.UseAuthentication();    // enable JWT authentication middleware
+app.UseAuthorization();     // enable role/permission checks
 
-app.UseCors(policyName);
+app.MapControllers();       // map controller routes
 
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+app.Run();                  // run the application

@@ -11,6 +11,7 @@ namespace Infusive_back.EntityData
         public DbSet<UserRole> UserRole { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Permission> Permission { get; set; }
+        public DbSet<Permission_Table> Permission_Table { get; set; }
         public DbSet<Page> Page { get; set; }
     }
 }
