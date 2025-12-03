@@ -1,0 +1,6 @@
+@Infusive_back_HostAddress = http://localhost:5011
+
+GET {{Infusive_back_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
