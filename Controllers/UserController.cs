@@ -35,6 +35,7 @@ namespace Infusive_back.Controllers
                     .Select(user => new
                     {
                         user.Id,
+                        user.UserId,
                         user.Name,
                         user.Email,
                         user.Mobile,
@@ -69,6 +70,7 @@ namespace Infusive_back.Controllers
 
                 var newUser = new User_Details
                 {
+                    UserId = users.UserId,
                     Name = users.Name,
                     Email = users.Email,
                     Password = users.Password,
@@ -208,6 +210,7 @@ namespace Infusive_back.Controllers
 
         public class UserDto
         {
+            public required string UserId { get; set; }
             public required string Name { get; set; }
             public required string Email { get; set; }
             public required string Password { get; set; }

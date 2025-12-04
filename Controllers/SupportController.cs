@@ -1,4 +1,5 @@
 ﻿using Infusive_back.EntityData;
+using Infusive_back.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
@@ -13,13 +14,25 @@ namespace Infusive_back.Controllers
     [ApiController]
     public class SupportController : ControllerBase
     {
-
+        private readonly MyDbContext db;
+        public SupportController(MyDbContext db)
+        {
+            this.db = db;
+        }
         private async Task<string> GetHrlenseToken()
         {
+            int userId = Int32.Parse(User.FindFirst("userId")?.Value);
+
+            var user = db.User_Details.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+                throw new Exception("User not found in the database");
+
+            var employeeId = user.UserId;
+
             using var client = new HttpClient();
 
             var response = await client.PostAsync(
-                $"https://hrms-demo.jobvritta.com/api/DropDown/generateToken?employee_Code=420",
+                $"https://hrms-demo.jobvritta.com/api/DropDown/generateToken?employee_Code={employeeId}",
                 null
             );
 
@@ -28,6 +41,57 @@ namespace Infusive_back.Controllers
 
             var json = await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>();
             return json.GetProperty("token").GetString();
+        }
+
+        [HttpGet("CheckUser")]
+        [Authorize]
+        public async Task<IActionResult> CheckUser([FromQuery] string userId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest(new { success = false, message = "UserId is required" });
+                }
+
+                using (var httpClient = new HttpClient())
+                {
+                    // Add required header for external API
+                    httpClient.DefaultRequestHeaders.Add("hrms-key", "Amar@Deep1Jobvritta#157");
+
+                    var url = $"https://hrms-demo.jobvritta.com/api/Hrlense_Employee/employeeCodeCheck?empCode={userId}";
+
+                    var response = await httpClient.GetAsync(url);
+
+                    var responseString = await response.Content.ReadAsStringAsync();
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        return Ok(new
+                        {
+                            success = true,
+                            message = "User found"
+                        });
+
+                    }
+                    else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        return Ok(new { success = false, message = "User not found" });
+                    }
+                    else
+                    {
+                        return Ok(new
+                        {
+                            success = false,
+                            message = "User inactive or invalid employee"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
         }
 
 
