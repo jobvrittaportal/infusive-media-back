@@ -5,6 +5,7 @@ namespace Infusive_back.Models
     public class User_Details : Base
     {
         [MaxLength(255)]
+        public required string UserId { get; set; }
         public required string Name { get; set; }
         public required string Email { get; set; }
         public required string Password { get; set; }
