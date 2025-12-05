@@ -5,12 +5,12 @@ namespace Infusive_back.Models
     public class User_Details : Base
     {
         [MaxLength(255)]
-        public required string UserId { get; set; }
         public required string Name { get; set; }
         public required string Email { get; set; }
         public required string Password { get; set; }
         public required string Mobile { get; set; }
         public bool IsActive { get; set; } = true;
+        public required string EmpId { get; set; }
         public virtual ICollection<UserRole>? UserRoles { get; set; }
     }
 

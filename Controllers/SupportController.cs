@@ -27,7 +27,7 @@ namespace Infusive_back.Controllers
             if (user == null)
                 throw new Exception("User not found in the database");
 
-            var employeeId = user.UserId;
+            var employeeId = user.EmpId;
 
             using var client = new HttpClient();
 
