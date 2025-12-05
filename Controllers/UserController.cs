@@ -35,10 +35,11 @@ namespace Infusive_back.Controllers
                     .Select(user => new
                     {
                         user.Id,
-                        user.UserId,
+                        user.EmpId,
                         user.Name,
                         user.Email,
                         user.Mobile,
+                        UserId = user.EmpId,
                         Roles = user.UserRoles
                             .Select(ur => new
                             {
@@ -70,7 +71,7 @@ namespace Infusive_back.Controllers
 
                 var newUser = new User_Details
                 {
-                    UserId = users.UserId,
+                    EmpId = users.UserId,
                     Name = users.Name,
                     Email = users.Email,
                     Password = users.Password,

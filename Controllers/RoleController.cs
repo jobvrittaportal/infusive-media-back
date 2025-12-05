@@ -54,7 +54,7 @@ namespace Infusive_back.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult AddRole(Role role)
+        public IActionResult AddRole(RoleDto role)
         {
             try
             {
@@ -65,7 +65,9 @@ namespace Infusive_back.Controllers
                 }
                 else
                 {
-                    db.Role.Add(role);
+                    alreadyExist.Name = role.Name;
+                    alreadyExist.Desc = role.Description;
+                    db.Role.Add(alreadyExist);
                     db.SaveChanges();
                     return Ok(new { role });
                 }
@@ -154,6 +156,12 @@ namespace Infusive_back.Controllers
             public int Page { get; set; }
             public string? SortField { get; set; }
             public int? SortOrder { get; set; } // 1 = ASC, -1 = DESC
+        }
+
+        public class RoleDto
+        {
+            public required string Name { get; set; }
+            public required string Description { get; set; }
         }
 
     }
