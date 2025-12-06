@@ -12,11 +12,11 @@ namespace Hrlense.Controllers.hrlense
     {
 
         private readonly MyDbContext dbContext;
-        private readonly PermissionCheck permission;
-        public PageController(MyDbContext dbContext)
+        private readonly CheckPermission permission;
+        public PageController(MyDbContext dbContext, CheckPermission permission)
         {
             this.dbContext = dbContext;
-            permission = new PermissionCheck(this.dbContext);
+            this.permission = permission;
         }
 
         [HttpGet]
@@ -113,9 +113,8 @@ namespace Hrlense.Controllers.hrlense
                     };
                     dbContext.Page.Add(feature);
                 }
+                dbContext.SaveChanges();
             }
-            dbContext.SaveChanges();
-
             permission.UpdatePage();
             return Ok(newPage);
         }
@@ -171,6 +170,7 @@ namespace Hrlense.Controllers.hrlense
                 }
                 dbContext.SaveChanges();
             }
+            permission.UpdatePage();
             return Ok(db_page);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Infusive_back.EntityData;
+using Infusive_back.JwtAuth;
 using Infusive_back.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,15 +10,18 @@ namespace Infusive_back.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoleController(MyDbContext db) : ControllerBase
+    public class RoleController(MyDbContext db, CheckPermission p) : ControllerBase
     {
         readonly private MyDbContext db = db;
+        readonly private CheckPermission p = p;
 
 
         [HttpGet]
         [Authorize]
         public IActionResult GetRoles([FromQuery] string? text, [FromQuery] string? lazyParams)
         {
+            if (!p.HasPermission(User, "Roles", "Read")) return BadRequest(new { Message = "Permission Denied!" });
+
             try
             {
                 int first = 0, rows = 10;
@@ -58,6 +62,8 @@ namespace Infusive_back.Controllers
         {
             try
             {
+                if (!p.HasPermission(User, "Roles", "Add")) return BadRequest(new { Message = "Permission Denied!" });
+
                 Role? alreadyExist = db.Role.SingleOrDefault(f => f.Name == role.Name);
                 if (alreadyExist != null)
                 {
@@ -65,9 +71,12 @@ namespace Infusive_back.Controllers
                 }
                 else
                 {
-                    alreadyExist.Name = role.Name;
-                    alreadyExist.Desc = role.Description;
-                    db.Role.Add(alreadyExist);
+                    Role newRole = new Role
+                    {
+                        Name = role.Name,
+                        Desc = role.Description
+                    };
+                    db.Role.Add(newRole);
                     db.SaveChanges();
                     return Ok(new { role });
                 }
@@ -84,6 +93,7 @@ namespace Infusive_back.Controllers
         {
             try
             {
+                if (!p.HasPermission(User, "Roles", "Edit")) return BadRequest(new { Message = "Permission Denied!" });
                 if (id <= 0)
                 {
                     return BadRequest(new { error = "Role ID is required" });
@@ -115,6 +125,7 @@ namespace Infusive_back.Controllers
         {
             try
             {
+                if (!p.HasPermission(User, "Roles", "Delete")) return BadRequest(new { Message = "Permission Denied!" });
                 var role = db.Role.SingleOrDefault(r => r.Id == id);
                 if (role == null)
                 {
@@ -161,7 +172,7 @@ namespace Infusive_back.Controllers
         public class RoleDto
         {
             public required string Name { get; set; }
-            public required string Description { get; set; }
+            public string? Description { get; set; }
         }
 
     }

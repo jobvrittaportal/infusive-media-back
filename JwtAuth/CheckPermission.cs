@@ -1,79 +1,60 @@
 ﻿using Infusive_back.EntityData;
 using Infusive_back.Models;
+using System.Security.Claims;
 
 namespace Infusive_back.JwtAuth
 {
+
     public class CheckPermission
     {
         private readonly MyDbContext _db;
+        private static List<Page>? Page;
+        private static List<Permission>? PagePermission;
+        private static List<UserRole>? UserRole;
 
         public CheckPermission(MyDbContext db)
         {
             _db = db;
-        }
-
-
-        /// Check if user has permission for a page or feature
-        public bool Role_Granted(int loginId, string? pageName, string? featureName = null)
-        {
-            if (pageName == null) return false;
-
-            // Get user roles
-            var roles = _db.UserRole
-                .Where(x => x.UserId == loginId)
-                .Select(x => x.RoleId)
-                .ToList();
-
-            if (!roles.Any()) return false;
-
-            // Find Page Id
-            int pageId = _db.Page
-                .Where(p => !p.IsFeature && p.Name == pageName)
-                .Select(p => p.Id)
-                .SingleOrDefault();
-
-            // If feature check is requested → find child page
-            if (featureName != null)
+            if (Page == null || PagePermission == null || UserRole == null)
             {
-                pageId = _db.Page
-                    .Where(p => p.ParentId == pageId && p.IsFeature && p.Name == featureName)
-                    .Select(p => p.Id)
-                    .SingleOrDefault();
+                UpdatePage();
+                UpdatePagePermission();
+                UpdateUserRole();
             }
-
-            if (pageId <= 0) return false;
-
-            // Check permission
-            return _db.Permission
-                .Where(p => roles.Contains(p.RoleId) && p.PageId == pageId)
-                .Any();
         }
 
-
-
-        /// Get all permissions for a user as object/list
-        public object Permission_Granted(int loginId)
+        public bool HasPermission(ClaimsPrincipal User, string pageName, string? featureName = null)
         {
-            // Get role IDs of user
-            var roles = _db.UserRole
-                .Where(x => x.UserId == loginId)
-                .Select(x => x.RoleId)
-                .ToList();
+            var login_id_claim = User.FindFirst("userId");
+            if (login_id_claim == null || login_id_claim.Value == null) return false;
 
-            if (!roles.Any()) return new { };
+            if (Page != null && PagePermission != null && UserRole != null)
+            {
+                int loginId = int.Parse(login_id_claim.Value);
+                int[] roles = UserRole.Where(f => f.UserId == loginId).Select(f => f.RoleId).ToArray();
 
-            // Return list of pages & permissions
-            var allowedPermissions = _db.Permission
-                .Where(p => roles.Contains(p.RoleId))
-                .Select(p => new
-                {
-                    p.PageId,
-                    PageName = p.Page!.Name,
-                    p.RoleId
-                })
-                .ToList();
+                int pageId = Page.Where(f => f.IsFeature == false && f.Name == pageName).Select(f => f.Id).SingleOrDefault();
 
-            return allowedPermissions;
+                if (featureName != null)
+                    pageId = Page.Where(f => f.ParentId == pageId && f.IsFeature == true && f.Name == featureName).Select(f => f.Id).SingleOrDefault();
+
+                return PagePermission.Where(f => roles.Contains(f.RoleId) && f.PageId == pageId).Any();
+            }
+            else return false;
         }
+
+        public void UpdatePagePermission()
+        {
+            PagePermission = _db.Permission.ToList();
+        }
+        public void UpdatePage()
+        {
+            Page = _db.Page.ToList();
+        }
+        public void UpdateUserRole()
+        {
+            UserRole = _db.UserRole.ToList();
+        }
+
     }
 }
