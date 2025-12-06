@@ -3,7 +3,6 @@ using Infusive_back.JwtAuth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +40,7 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 
 // ----------- JWT TOKEN SERVICES -----------
 builder.Services.AddSingleton<ITokenManager, TokenManager>(); // custom token manager (singleton instance)
+builder.Services.AddScoped<CheckPermission>();
 
 // Configure authentication to use JWT Bearer
 builder.Services.AddAuthentication(options =>

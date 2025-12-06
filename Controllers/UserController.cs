@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 using static Hrlense.Controllers.hrlense.PageController;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Infusive_back.Controllers
 {
@@ -16,18 +19,16 @@ namespace Infusive_back.Controllers
     {
         readonly private MyDbContext db;
         private readonly JwtAuth.ITokenManager tokenManager;
-        private readonly PermissionCheck _permissionCheck;
 
         public UserController(MyDbContext db, JwtAuth.ITokenManager tokenManager)
         {
             this.db = db;
             this.tokenManager = tokenManager;
-            _permissionCheck = new PermissionCheck(db);
         }
 
         [HttpGet]
         [Authorize]
-        public IActionResult GetUsers([FromQuery] string? text)
+        public IActionResult GetUsers([FromQuery] int? skip, [FromQuery] int? limit, [FromQuery] string? search)
         {
             try
             {
@@ -47,10 +48,21 @@ namespace Infusive_back.Controllers
                                 ur.Role.Name
                             })
                             .ToList()
-                    })
-                    .ToList();
+                    });
 
-                return Ok(query);
+                if (!string.IsNullOrEmpty(search))
+                {
+                    var lower = search.ToLower();
+                    query = query.Where(u =>
+                        u.Name.ToLower().Contains(lower)
+                    );
+                }
+
+                var totalCount = query.Count();
+
+                var users = query.OrderBy(u => u.Id).Skip(skip ?? 0).Take(limit ?? 10).ToList();
+
+                return Ok(new {totalCount = totalCount, users = users });
             }
             catch (Exception ex)
             {
@@ -194,7 +206,7 @@ namespace Infusive_back.Controllers
 
                 return Ok(new
                 {
-                    isAdmin = User.Email == "admin" ? true : false,
+                    isAdmin = User.Id == 1 ? true : false,
                     message = "Login successful",
                     token = token,
                     userId = User.Id,
