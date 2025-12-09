@@ -1,4 +1,4 @@
-﻿using Infusive_back.EntityData;
+using Infusive_back.EntityData;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Infusive_back.Controllers
