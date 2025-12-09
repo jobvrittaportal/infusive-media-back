@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Infusive_back.Models;
 
 namespace Infusive_back.EntityData
@@ -13,5 +13,11 @@ namespace Infusive_back.EntityData
         public DbSet<Permission> Permission { get; set; }
         public DbSet<Permission_Table> Permission_Table { get; set; }
         public DbSet<Page> Page { get; set; }
+        public DbSet<Company> Company { get; set; }
+        public DbSet<IndustryType> IndustryType { get; set; }
+        public DbSet<CompanyPoc> CompanyPoc { get; set; }
+        public DbSet<Country> Country { get; set; }
+        public DbSet<State> State { get; set; }
+        public DbSet<City> City { get; set; }
     }
 }
