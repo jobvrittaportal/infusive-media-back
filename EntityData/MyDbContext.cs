@@ -15,6 +15,7 @@ namespace Infusive_back.EntityData
         public DbSet<Page> Page { get; set; }
         public DbSet<Company> Company { get; set; }
         public DbSet<IndustryType> IndustryType { get; set; }
+        public DbSet<Designation> Designation { get; set; }
         public DbSet<CompanyPoc> CompanyPoc { get; set; }
         public DbSet<Country> Country { get; set; }
         public DbSet<State> State { get; set; }
