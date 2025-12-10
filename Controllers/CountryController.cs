@@ -156,7 +156,30 @@ namespace Infusive_back.Controllers
       }
     }
 
+    [HttpGet("countrycodedropdown")]
+    public IActionResult GetCountryCodeDropdown()
+    {
+      try
+      {
+        var countries = db.Country.Select(r => new
+        {
+          CountryId = r.Id,
+          countryName = r.Name,
+          flag=r.FlagUrl,
+          dialCode=r.DialCode,
+          code=r.Code,
 
-
+        }).ToList();
+        return Ok(countries);
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500, new
+        {
+          success = false,
+          error = ex.Message
+        });
+      }
+    }
   }
 }

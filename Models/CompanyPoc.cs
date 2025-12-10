@@ -6,7 +6,7 @@ namespace Infusive_back.Models
   {
     public required string Name { get; set; }
     public int CompanyId { get; set; }
-    [ForeignKey(nameof(Id))]
+    [ForeignKey(nameof(CompanyId))]
     public virtual Company? Company { get; set; }
     public string? Email { get; set; }
     public string? PhoneCountryCode { get; set; }

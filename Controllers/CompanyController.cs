@@ -3,6 +3,7 @@ using Infusive_back.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infusive_back.Controllers
 {
@@ -26,7 +27,7 @@ namespace Infusive_back.Controllers
     {
       try
       {
-        var query = db.Company.Include(u => u.IndustryType)
+        var query = db.Company.Include(u => u.IndustryType).Include(u=>u.Country).Include(u=>u.State).Include(u=>u.City)
             .Select(user => new
             {
               user.Id,
@@ -36,9 +37,18 @@ namespace Infusive_back.Controllers
               user.CompanyEmail,
               WebsiteUrl = user.WebsiteUrl,
               Feid = user.Feid,
-              AddressLine = user.AddressLine,
+              // AddressLine = user.AddressLine,
               PostalZipCode = user.PostalZipCode,
-              IndustryType = user.IndustryType.IndustryName.ToList()
+              IndustryTypeName = user.IndustryType.IndustryName,
+              CountryName=user.Country.Name,
+              StateName=user.State.Name,
+              CityName=user.City.Name,
+              Status=user.Status,
+              industryTypeID=user.IndustryType.Id,
+              CityId = user.City.Id,
+              StateId = user.State.Id,
+              CountryId = user.Country.Id,
+
             });
         if (!string.IsNullOrEmpty(search))
         {
@@ -49,7 +59,7 @@ namespace Infusive_back.Controllers
         }
         var totalCount = query.Count();
         var company = query.OrderBy(u => u.Id).Skip(skip ?? 0).Take(limit ?? 10).ToList();
-        return Ok(new { totalCount = totalCount, companies = company });
+        return Ok(new { totalCount = totalCount, company = company });
       }
       catch (Exception ex)
       {
@@ -76,7 +86,11 @@ namespace Infusive_back.Controllers
           CompanyEmail = company.CompanyEmail,
           WebsiteUrl = company.WebsiteUrl,
           Feid = company.Feid,
-          AddressLine = company.AddressLine,
+          Status=company.Status,
+          CountryId=company.CountryId,
+          StateId=company.StateId,
+          CityId=company.CityId,
+        //  FlagUrl = company.FlagUrl,
           PostalZipCode = company.PostalZipCode,
         };
         db.Company.Add(newCompany);
@@ -103,11 +117,11 @@ namespace Infusive_back.Controllers
           return NotFound(new { error = "Company not found" });
         }
 
-        Company? alreadyExist = db.Company.SingleOrDefault(f => f.CompanyName.Trim().Equals(companyDto.CompanyName.Trim(), StringComparison.CurrentCultureIgnoreCase)&&  f.Id != comapny.Id);
-        if (alreadyExist != null)
-        {
-          return BadRequest(new { error = "Company is already exist" });
-        }
+        //Company? alreadyExist = db.Company.SingleOrDefault(f => f.CompanyName.Trim().Equals(companyDto.CompanyName.Trim(), StringComparison.CurrentCultureIgnoreCase) && f.Id != comapny.Id);
+        //if (alreadyExist != null)
+        //{
+        //  return BadRequest(new { error = "Company is already exist" });
+        //}
 
         comapny.CompanyName = companyDto.CompanyName;
         comapny.IndustrytypeId = companyDto.IndustrytypeId;
@@ -116,8 +130,12 @@ namespace Infusive_back.Controllers
         comapny.CompanyEmail = companyDto.CompanyEmail;
         comapny.WebsiteUrl = companyDto.WebsiteUrl;
         comapny.Feid = companyDto.Feid;
-        comapny.AddressLine = companyDto.AddressLine;
+      //  comapny.FlagUrl = companyDto.FlagUrl;
         comapny.PostalZipCode = companyDto.PostalZipCode;
+        comapny.Status = companyDto.Status;
+        comapny.CountryId = companyDto.CountryId;
+        comapny.StateId = companyDto.StateId;
+        comapny.CityId = companyDto.CityId;
 
 
         db.SaveChanges();
@@ -157,7 +175,7 @@ namespace Infusive_back.Controllers
     {
       try
       {
-      
+
 
         var companies = db.Company
             .Select(s => new
@@ -212,21 +230,30 @@ namespace Infusive_back.Controllers
     public required string CompanyEmail { get; set; }
     public required string WebsiteUrl { get; set; }
     public required string Feid { get; set; }
-    public required string AddressLine { get; set; }
+
     public required string PostalZipCode { get; set; }
+ 
+    public bool Status { get; set; }
+    public int? CountryId { get; set; }
+    public int? StateId { get; set; }
+    public int? CityId { get; set; }
   }
 
   public class UpdateCompanyDto
   {
-    public required int Id { get; set; }
+    public int? Id { get; set; }
     public required string CompanyName { get; set; }
     public int IndustrytypeId { get; set; }
     public required string PhoneCountryCode { get; set; }
+  //  public required string FlagUrl { get; set; }
     public required string CompanyPhone { get; set; }
     public required string CompanyEmail { get; set; }
     public required string WebsiteUrl { get; set; }
     public required string Feid { get; set; }
-    public required string AddressLine { get; set; }
     public required string PostalZipCode { get; set; }
+    public bool Status { get; set; }
+    public int? CountryId { get; set; }
+    public int? StateId { get; set; }
+    public int? CityId { get; set; }
   }
 }
