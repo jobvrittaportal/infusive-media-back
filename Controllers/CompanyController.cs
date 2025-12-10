@@ -38,7 +38,7 @@ namespace Infusive_back.Controllers
               Feid = user.Feid,
               AddressLine = user.AddressLine,
               PostalZipCode = user.PostalZipCode,
-              IndustryType = user.IndustryType.Name.ToList()
+              IndustryType = user.IndustryType.IndustryName.ToList()
             });
         if (!string.IsNullOrEmpty(search))
         {

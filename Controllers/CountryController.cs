@@ -49,7 +49,7 @@ namespace Infusive_back.Controllers
 
         var result = query.Skip(first).Take(rows).ToList();
 
-        return Ok(new { countries = result, count = totalRecords });
+        return Ok(new { countries = result, TotalCount = totalRecords });
       }
       catch (Exception ex)
       {
