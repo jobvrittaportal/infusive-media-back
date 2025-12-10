@@ -119,15 +119,12 @@ namespace Infusive_back.Controllers
       }
     }
 
-    [HttpPut("{id}")]
-    public IActionResult EditCity(int id, [FromBody] AddCityDto updatedData)
+    [HttpPut]
+    public IActionResult EditCity( [FromBody] AddCityDto updatedData)
     {
       try
       {
-        if (id <= 0)
-        {
-          return BadRequest(new { error = "ID is required" });
-        }
+       
         if (string.IsNullOrWhiteSpace(updatedData.Name))
         {
           return BadRequest(new { error = "City name is required." });
@@ -136,14 +133,14 @@ namespace Infusive_back.Controllers
         bool cityExists = db.City.Any(c =>
           c.Name.ToLower() == updatedData.Name.ToLower() &&
           c.StateId == updatedData.StateId &&
-          c.Id != id);
+          c.Id != updatedData.Id);
 
         if (cityExists)
         {
           return BadRequest(new { error = "A city with this name already exists in the selected state." });
         }
 
-        var city = db.City.SingleOrDefault(r => r.Id == id);
+        var city = db.City.SingleOrDefault(r => r.Id == updatedData.Id);
         if (city == null)
         {
           return NotFound(new { error = "City not found" });
@@ -225,14 +222,9 @@ namespace Infusive_back.Controllers
   {
     [MaxLength(255)]
     public required string Name { get; set; }
-    public bool IsTouristDestination { get; set; } = false;
-    public bool IsDisplayHome { get; set; } = false;
     public required int StateId { get; set; }
+    public int? Id { get; set; }
     public string? Description { get; set; }
-    public decimal Latitude { get; set; }
-    public decimal Longitude { get; set; }
-    public int? BasePrice { get; set; }
-
   }
 
 

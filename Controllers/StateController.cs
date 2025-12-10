@@ -98,16 +98,13 @@ namespace Infusive_back.Controllers
       }
     }
 
-    [HttpPut("{id}")]
+    [HttpPut]
     [Authorize]
     public IActionResult EditState(int id, [FromBody] AddStateDto updatedData)
     {
       try
       {
-        if (id <= 0)
-        {
-          return BadRequest(new { error = "ID is required" });
-        }
+      
         var state = db.State.SingleOrDefault(r => r.Id == id);
         if (state == null)
         {
@@ -185,4 +182,13 @@ namespace Infusive_back.Controllers
     public required string Name { get; set; }
     public required int CountryId { get; set; }
   }
+
+  public class UpdattateDto
+  {
+    [MaxLength(255)]
+    public required string Name { get; set; }
+    public required int Id { get; set; }
+    public required int CountryId { get; set; }
+  }
+
 }
