@@ -1,5 +1,6 @@
 using Infusive_back.EntityData;
 using Microsoft.AspNetCore.Mvc;
+using static Infusive_back.Controllers.DesignationController;
 using static Infusive_back.Controllers.IndustryTypeController;
 
 namespace Infusive_back.Controllers
@@ -159,6 +160,67 @@ namespace Infusive_back.Controllers
                     success = false,
                     error = ex.Message
                 });
+            }
+        }
+
+        [HttpGet("designations")]
+        public IActionResult GetDesignation()
+        {
+            try
+            {
+                var query = (from ityp in db.Designation
+                             select new 
+                             {
+                                 DesignationId = ityp.Id,
+                                 DesignationName = ityp.DesignationName ?? "",
+                             });
+
+                return Ok(query);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpGet("company")]
+        public IActionResult GetCompany()
+        {
+            try
+            {
+                var query = (from ityp in db.Company
+                             select new
+                             {
+                                 CompanyId = ityp.Id,
+                                 CompanyName = ityp.CompanyName ?? "",
+                             });
+
+                return Ok(query);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("users")]
+        public IActionResult GetUsers()
+        {
+            try
+            {
+                var query = (from ityp in db.User_Details
+                             select new
+                             {
+                                 UserId = ityp.Id,
+                                 UserName = ityp.Name ?? "",
+                             });
+
+                return Ok(query);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
