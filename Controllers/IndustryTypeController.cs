@@ -26,6 +26,14 @@ namespace Infusive_back.Controllers
                                  Status = ityp.Status ?? false,
                              });
 
+                if (!string.IsNullOrEmpty(search))
+                {
+                    var lower = search.ToLower();
+                    query = query.Where(u =>
+                        u.IndustryName.ToLower().Contains(lower)
+                    );
+                }
+
                 var totalCount = query.Count();
 
                 var indusrties = query.OrderBy(u => u.Id).Skip(skip ?? 0).Take(limit ?? 10).ToList();
