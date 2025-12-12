@@ -20,5 +20,7 @@ namespace Infusive_back.EntityData
         public DbSet<Country> Country { get; set; }
         public DbSet<State> State { get; set; }
         public DbSet<City> City { get; set; }
+        public DbSet<Source> Source { get; set; }
+        public DbSet<Status>Status { get; set; }
     }
 }
