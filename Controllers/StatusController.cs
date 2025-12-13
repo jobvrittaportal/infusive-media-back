@@ -18,6 +18,7 @@ namespace Infusive_back.Controllers
             try
             {
 
+
                 var query = (from ityp in db.Status
                              select new GetStatus
                              {

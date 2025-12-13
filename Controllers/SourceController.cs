@@ -38,7 +38,7 @@ namespace Infusive_back.Controllers
 
                 var source = query.OrderBy(u => u.Id).Skip(skip ?? 0).Take(limit ?? 10).ToList();
 
-                return Ok(new { totalCount = totalCount, indusrties = source });
+                return Ok(new { totalCount = totalCount, source = source });
             }
             catch (Exception ex)
             {
