@@ -20,7 +20,7 @@ namespace Infusive_back.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult GetPoc([FromQuery] int? skip, [FromQuery] int? limit, [FromQuery] string? search, int companyId)
+        public IActionResult GetPoc([FromQuery] int? skip, [FromQuery] int? limit, [FromQuery] string? search, [FromQuery] int? companyId)
         {
             try
             {
@@ -30,6 +30,7 @@ namespace Infusive_back.Controllers
                         user.Id,
                         Name = user.Name,
                         CompanyId = user.CompanyId,
+                        CompanyName = user.Company.CompanyName,
                         Email = user.Email,
                         PhoneCountryCode = user.PhoneCountryCode,
                         PhoneNumber = user.PhoneNumber,
@@ -38,7 +39,12 @@ namespace Infusive_back.Controllers
                         DesignationId = user.DesignationId,
                         LinkedinUrl = user.LinkedinUrl,
                         //CompanyName = user.Company.CompanyName.ToList()
-                    }).Where(f => f.CompanyId == companyId);
+                    });
+
+                if (companyId.HasValue)
+                {
+                    query = query.Where(u => u.CompanyId == companyId);
+                }
 
                 if (!string.IsNullOrEmpty(search))
                 {

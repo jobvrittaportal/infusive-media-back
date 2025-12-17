@@ -1,7 +1,10 @@
 using Infusive_back.EntityData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Infusive_back.Controllers.DesignationController;
 using static Infusive_back.Controllers.IndustryTypeController;
+using static Infusive_back.Controllers.SourceController;
+using static Infusive_back.Controllers.StatusController;
 
 namespace Infusive_back.Controllers
 {
@@ -14,6 +17,7 @@ namespace Infusive_back.Controllers
 
         [HttpGet]
         [Route("getRoles")]
+        [Authorize]
         public IActionResult GetRole()
         {
             try
@@ -35,6 +39,7 @@ namespace Infusive_back.Controllers
 
         [HttpGet]
         [Route("IndustryType")]
+        [Authorize]
         public IActionResult GetIndustryTypes()
         {
             try
@@ -57,13 +62,15 @@ namespace Infusive_back.Controllers
         }
 
         [HttpGet("country")]
+        [Authorize]
         public IActionResult GetCountryDropdown()
         {
             try
             {
-                var countries = db.Country.Select(r => new {
+                var countries = db.Country.Select(r => new
+                {
                     CountryId = r.Id,
-                    CountryName = r.Name ,
+                    CountryName = r.Name,
                 }).ToList();
                 return Ok(countries);
             }
@@ -78,6 +85,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpGet("state/{countryId}")]
+        [Authorize]
         public IActionResult GetStatesByCountry(int countryId)
         {
             try
@@ -108,6 +116,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpGet("city/{stateId}")]
+        [Authorize]
         public IActionResult GetCitiesByState(int stateId)
         {
             try
@@ -138,6 +147,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpGet("countrycodedropdown")]
+        [Authorize]
         public IActionResult GetCountryCodeDropdown()
         {
             try
@@ -164,12 +174,13 @@ namespace Infusive_back.Controllers
         }
 
         [HttpGet("designations")]
+        [Authorize]
         public IActionResult GetDesignation()
         {
             try
             {
                 var query = (from ityp in db.Designation
-                             select new 
+                             select new
                              {
                                  DesignationId = ityp.Id,
                                  DesignationName = ityp.DesignationName ?? "",
@@ -185,6 +196,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpGet("company")]
+        [Authorize]
         public IActionResult GetCompany()
         {
             try
@@ -205,6 +217,7 @@ namespace Infusive_back.Controllers
         }
 
         [HttpGet("users")]
+        [Authorize]
         public IActionResult GetUsers()
         {
             try
@@ -216,6 +229,46 @@ namespace Infusive_back.Controllers
                                  UserName = ityp.Name ?? "",
                              });
 
+                return Ok(query);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("status")]
+        [Authorize]
+        public IActionResult GetStatuss()
+        {
+            try
+            {
+                var query = (from ityp in db.Status
+                             select new 
+                             {
+                                 StatusId = ityp.Id,
+                                 StatusName = ityp.StatusName ?? "",
+                             });
+                return Ok(query);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("source")]
+        [Authorize]
+        public IActionResult GetSourcee()
+        {
+            try
+            {
+                var query = (from ityp in db.Source
+                             select new 
+                             {
+                                 SourceId = ityp.Id,
+                                 SourceName = ityp.SourceName ?? "",
+                             });
                 return Ok(query);
             }
             catch (Exception ex)
